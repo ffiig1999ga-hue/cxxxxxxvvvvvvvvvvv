@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Lock, User, Phone, Network } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LoginFormProps {
   onLogin: (userType: string, username: string) => void;
@@ -21,6 +22,37 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  const getDisplayNameForSingleUser = async (mobileNumber: string) => {
+    try {
+      // First, try to get suggested name
+      const { data: suggestedData } = await supabase
+        .from('suggested_names')
+        .select('suggested_name')
+        .eq('mobile_number', mobileNumber)
+        .maybeSingle();
+
+      if (suggestedData?.suggested_name) {
+        return suggestedData.suggested_name;
+      }
+
+      // If no suggested name, try to get customer name from database
+      const { data: customerData } = await supabase
+        .from('customers')
+        .select('customer_name')
+        .eq('mobile_number', parseInt(mobileNumber))
+        .maybeSingle();
+
+      if (customerData?.customer_name) {
+        return customerData.customer_name;
+      }
+
+      // Fallback to mobile number
+      return mobileNumber;
+    } catch (error) {
+      console.error('Error fetching display name:', error);
+      return mobileNumber;
+    }
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -52,6 +84,7 @@ export const LoginForm = ({ onLogin }: LoginFormProps) => {
         // For single user, username should be a mobile number, no password required
         if (username) {
           isValid = true;
+          actualUsername = await getDisplayNameForSingleUser(username);
           actualUsername = username;
         }
       }

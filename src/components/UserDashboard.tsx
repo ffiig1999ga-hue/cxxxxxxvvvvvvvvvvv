@@ -450,52 +450,6 @@ export const UserDashboard = ({ userType, username }: UserDashboardProps) => {
       </div>
 
       {/* Units Check Message for Single Users */}
-      {userType === "single" && customers.length > 0 && customers[0].provider === "orange" && (
-        <Card className="animate-fade-in shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-orange-50 to-yellow-50 border-l-4 border-l-orange-500">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-orange-700">
-              <Phone className="h-5 w-5" />
-              معرفة الوحدات المتبقية
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <p className="text-orange-800">
-                لمعرفة الوحدات المتبقية في باقتك، اطلب الكود التالي (التكلفة: 4 قروش)
-              </p>
-              <div className="bg-white p-4 rounded-lg border-2 border-dashed border-orange-300 shadow-inner">
-                <div className="flex items-center justify-between">
-                  <code className="text-2xl font-bold text-orange-600 select-all font-mono bg-orange-50 px-3 py-2 rounded">
-                    #16*1*1#
-                  </code>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => copyToClipboard("#16*1*1#")}
-                      className="hover-scale bg-orange-100 hover:bg-orange-200 text-orange-700 border-orange-300"
-                    >
-                      <Copy className="h-4 w-4 ml-1" />
-                      نسخ
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => makeCall("#16*1*1#")}
-                      className="hover-scale bg-orange-600 hover:bg-orange-700 text-white"
-                    >
-                      <PhoneCall className="h-4 w-4 ml-1" />
-                      اتصال
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              <p className="text-sm text-orange-700 bg-orange-50 p-3 rounded-lg">
-                اضغط على "نسخ" لنسخ الكود، أو "اتصال" للاتصال المباشر بالكود
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
       <div className="grid gap-6">
         {customers.map((customer, index) => (
           <Card key={customer.id} className="animate-fade-in shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-l-4 border-l-blue-500 bg-black/80 text-white border-gray-600" style={{ animationDelay: `${index * 0.1}s` }}>
@@ -626,6 +580,44 @@ export const UserDashboard = ({ userType, username }: UserDashboardProps) => {
                   <span className="text-orange-600 font-semibold">{formatRenewalWithProvider(customer.charging_date, null, customer.provider)}</span>
                 </div>
               </div>
+
+              {/* Units Check Message for Orange Users - Moved here and made smaller */}
+              {userType === "single" && customer.provider === "orange" && (
+                <div className="mt-4 p-3 bg-orange-900/30 rounded-lg border border-orange-600/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Phone className="h-4 w-4 text-orange-400" />
+                    <span className="text-orange-300 font-medium text-sm">معرفة الوحدات المتبقية</span>
+                  </div>
+                  <div className="flex items-center justify-between bg-orange-800/30 p-2 rounded border border-dashed border-orange-500/50">
+                    <code className="text-lg font-bold text-orange-300 font-mono">
+                      #16*1*1#
+                    </code>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard("#16*1*1#")}
+                        className="h-7 px-2 text-xs text-orange-300 hover:text-orange-200 hover:bg-orange-800/50"
+                      >
+                        <Copy className="h-3 w-3 ml-1" />
+                        نسخ
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => makeCall("#16*1*1#")}
+                        className="h-7 px-2 text-xs text-orange-300 hover:text-orange-200 hover:bg-orange-800/50"
+                      >
+                        <PhoneCall className="h-3 w-3 ml-1" />
+                        اتصال
+                      </Button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-orange-400 mt-1">
+                    التكلفة: 4 قروش
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
